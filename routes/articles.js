@@ -6,43 +6,13 @@ const router = app.Router();
 
 __parentDir = path.dirname(process.mainModule.filename);
 
-router.get("/mainpage", (req, res) => {
-    JSDOM
-        .fromURL("http://dsl.sk/")
-        .then(dom => {
-            const newsBox = dom.window.document.getElementById("news_box").children
-            const articles = Array
-                .from(newsBox)
-                .filter(x => x.tagName !== "BR")
+router.get("/" , (req,res) => {
+    getPageData(req,res,"999999")
+    })
+router.get("/:pageId", (req,res) => getPageData(req,res,req.params.pageId))
 
-            const articleNames = articles
-                .map(x => x.innerHTML)
-                .filter(x => !x.startsWith("("))
-
-            const articleCommentCount = articles
-                .map(x => x.innerHTML)
-                .filter(x => x.startsWith("("))
-                .map (x => x.replace("(","").replace(")",""))
-                .map (x => Number(x))
-
-            const articleId = articles
-                .map(x => x.getAttribute("href"))
-                .filter(x =>! x.includes("&count"))
-                .map( x => Number(x.split("=")[1]))
-
-            var result = []
-            for(var i=0;i<articleNames.length;i++){
-                result.push({ "id":articleId[i], "title" : articleNames[i],"commentCount" : articleCommentCount[i] })
-            }
-            res.json({ "success": true ,"data": result })
-        })
-        .catch(err => {
-            res.json({ success: false , message : err.toString()})
-        });
-})
-
-router.get("/page/:pageId", (req,res) => {
-    const id = req.params.pageId === "1" ? 999999 : req.params.pageId;
+function getPageData(req,res,id) {
+  //  const id = req.params.pageId === "1" ? 999999 : req.params.pageId;
     JSDOM.fromURL("http://dsl.sk/index_news.php?page="+id)
     .then(dom => {
         const body = dom.window.document.getElementById("body")
@@ -64,6 +34,5 @@ router.get("/page/:pageId", (req,res) => {
     .catch(err => {
         res.json({ success: false , message : err.toString()})
     });
-})
-
+}
 module.exports = router;
