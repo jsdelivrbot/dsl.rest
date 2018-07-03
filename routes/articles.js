@@ -32,9 +32,9 @@ router.get("/mainpage", (req, res) => {
 
             var result = []
             for(var i=0;i<articleNames.length;i++){
-                result.push({ id:articleId[i], title : articleNames[i],commentCount : articleCommentCount[i] })
+                result.push({ "id":articleId[i], "title" : articleNames[i],"commentCount" : articleCommentCount[i] })
             }
-            res.json({ success: true ,data: result })
+            res.json({ "success": true ,"data": result })
         })
         .catch(err => {
             res.json({ success: false , message : err.toString()})
@@ -53,11 +53,11 @@ router.get("/page/:pageId", (req,res) => {
             const title =  x.getElementsByClassName("title")[0].innerHTML
             const snippet = Array.from(x.getElementsByClassName("article_perex")).map( x => x.innerHTML).reduce((acc,current)=> acc +" " + current).toString()
             const dateTime = snippet.substring(snippet.length -23 , snippet.length).split(",")[0].trim()
-            return {id : id, title :title, snippet:snippet.substring(0,snippet.length-23).trim(), time:dateTime}
+            return {"id" : id, "title" :title, "snippet":snippet.substring(0,snippet.length-23).trim(), "time":dateTime}
         })
         const rows = Array.from(body.getElementsByTagName("tr"))
         const nextPageId = Number(rows[rows.length-2].getElementsByTagName("A")[1].getAttribute("href").split("=")[1])
-        res.json({success : true,  nextPageId : nextPageId , data : data})
+        res.json({"success" : true,  "nextPageId" : nextPageId , "data" : data})
 
     }
     )
